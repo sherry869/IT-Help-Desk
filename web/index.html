@@ -1,0 +1,421 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QueueLab | IT Help Desk</title>
+<style>
+:root {
+  --bg:#070b13; --panel:#0e1625; --panel2:#111e31;
+  --line:#243550; --blue:#328bff; --cyan:#75d8ff;
+  --white:#f3f7ff; --muted:#91a2bb; --green:#70e0ba;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--white);font:14px/1.6 "Segoe UI",Arial,sans-serif}
+header{height:72px;padding:0 6%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);background:#080e18}
+.brand{display:flex;align-items:center;gap:12px;font-size:19px;font-weight:800}
+.logo{width:36px;height:36px;display:grid;place-items:center;color:var(--cyan);border:1px solid var(--blue);background:#102440;font-size:20px}
+.brand span{color:var(--blue)}
+.status{font-size:10px;letter-spacing:2px;color:var(--muted)}
+.status i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--cyan);margin-right:8px;box-shadow:0 0 10px var(--blue)}
+main{max-width:1400px;margin:auto;padding:0 5%}
+.hero{padding:68px 0 42px}
+.eyebrow{color:var(--cyan);font-size:10px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase}
+h1{font-size:clamp(45px,7vw,82px);line-height:1;letter-spacing:-3px;margin:20px 0}
+h1 span{color:#7286a4}
+h2{font-size:30px;letter-spacing:-1px;margin:8px 0}
+h3{font-size:16px;margin:0}
+p{margin:0}
+.hero p,.sub{color:var(--muted);max-width:680px;line-height:1.8}
+.hero-tags{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}
+.tag{border:1px solid var(--line);padding:7px 11px;color:#b7c9e2;font-size:10px}
+.tag b{color:var(--cyan)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:10px 0 48px}
+.stat,.panel{border:1px solid var(--line);background:linear-gradient(140deg,var(--panel2),var(--panel))}
+.stat{padding:17px}
+.stat span{display:block;color:var(--muted);font-size:11px}
+.stat strong{display:block;font-size:30px;margin-top:5px}
+.stat strong em{font-style:normal;color:var(--cyan)}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin:42px 0 20px}
+.section-head p{color:var(--muted);font-size:12px}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:16px;align-items:start}
+.panel{margin-bottom:16px;min-width:0}
+.panel-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.panel-head small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.panel-body{padding:19px}
+label{display:block;color:#c0cde0;font-size:10px;letter-spacing:1px;margin-bottom:7px}
+.field{margin-bottom:15px}
+input,select{width:100%;padding:12px;background:#080f1a;color:var(--white);border:1px solid #2b405d;border-radius:2px;font:inherit;font-size:12px}
+input:focus,select:focus{outline:1px solid var(--blue);border-color:var(--blue)}
+option{background:var(--panel)}
+button{font:inherit;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.btn{border:1px solid var(--line);background:transparent;color:var(--white);padding:11px 13px;font-size:11px;font-weight:700}
+.btn:hover{border-color:var(--cyan)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#06101e}
+.btn.primary:hover{background:var(--cyan)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.full{width:100%}
+.message{min-height:20px;margin-top:12px;color:var(--cyan);font-size:11px}
+.hint{font-size:11px;color:var(--muted);line-height:1.8}
+.legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:10px}
+.legend i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--blue);margin-right:6px}
+.legend i.cyan{background:var(--cyan)}
+.structure{padding:19px}
+.structure-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.structure-top .label{font-size:10px;letter-spacing:1.5px;color:var(--cyan)}
+.count{font-size:11px;color:var(--muted)}
+.nodes{display:flex;gap:9px;align-items:stretch;overflow-x:auto;padding:24px 4px 18px;min-height:105px}
+.node{flex:0 0 145px;min-width:0;position:relative;border:1px solid #31517a;background:#10213a;padding:12px;animation:appear .35s ease-out}
+.node:first-child{border-color:var(--cyan);box-shadow:0 0 15px #328bff1c}
+.node strong{display:block;font-size:12px;overflow-wrap:anywhere;line-height:1.5}
+.node small{display:block;color:var(--muted);font-size:10px;margin-top:5px;overflow-wrap:anywhere}
+.node .id{color:var(--cyan);font:10px monospace;margin-bottom:5px}
+.node .level{display:inline-block;color:var(--cyan);font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-top:8px}
+.node.normal .level{color:#b3c2d8}
+.node.resolved{border-color:#247d70;background:#0d2628}
+.node.resolved .id,.node.resolved .level{color:var(--green)}
+.arrow{flex:0 0 20px;align-self:center;text-align:center;color:var(--cyan);font-size:19px}
+.empty{width:100%;align-self:center;text-align:center;color:#71839d;font-size:11px;padding:15px}
+.node.just-added{animation:appear .4s ease-out}
+@keyframes appear{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.node.just-removed{animation:depart .3s ease-in}
+@keyframes depart{to{opacity:0;transform:translateX(25px)}}
+.flow-note{border-top:1px solid var(--line);padding-top:13px;color:var(--muted);font-size:10px;line-height:1.8}
+.operation-log{margin-top:15px}
+.log-list{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+.log-entry{display:flex;gap:12px;padding:10px 12px;background:#080f19;border:1px solid #1e3049;font-size:11px;line-height:1.6}
+.log-entry code{color:var(--cyan);white-space:nowrap}
+.log-entry span{color:#b3c3d8;overflow-wrap:anywhere}
+.log-entry:first-child{border-color:#2e6199}
+.log-empty{color:var(--muted);font-size:11px;padding:10px}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:24px 0 30px;display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:10px}
+footer b{color:var(--cyan)}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.stats{margin-bottom:35px}.section-head{display:block}.section-head p{margin-top:8px}}
+@media(max-width:560px){header{padding:0 5%;height:64px}.status{font-size:8px;letter-spacing:1px}main{padding:0 4%}.hero{padding-top:50px}h1{letter-spacing:-2px}.stats{grid-template-columns:repeat(2,1fr)}.stat{padding:12px}.stat strong{font-size:25px}.panel-head,.panel-body,.structure{padding:14px}.node{flex-basis:125px}footer{display:block}footer span{display:block;margin-bottom:5px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo">H</div><div>HelpDesk<span>.</span></div></div>
+  <div class="status"><i></i> INTERACTIVE DSA SIMULATION</div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="eyebrow">Java · Data Structures & Algorithms</div>
+  <h1>Every issue.<br><span>Handled in order.</span></h1>
+  <p>An interactive IT Help Desk simulation. Watch normal complaints move through a FIFO queue, urgent complaints get priority, and resolved requests connect into a linked list.</p>
+  <div class="hero-tags">
+    <div class="tag"><b>01</b> NORMAL QUEUE</div>
+    <div class="tag"><b>02</b> PRIORITY QUEUE</div>
+    <div class="tag"><b>03</b> LINKED LIST</div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="stat"><span>Pending complaints</span><strong id="pendingCount"><em>0</em></strong></div>
+  <div class="stat"><span>Normal queue</span><strong id="normalCount">0</strong></div>
+  <div class="stat"><span>Priority queue</span><strong id="priorityCount">0</strong></div>
+  <div class="stat"><span>Resolved history</span><strong id="resolvedCount">0</strong></div>
+</section>
+
+<section class="section-head">
+  <div><div class="eyebrow">Live workspace / 01</div><h2>Complaint control room</h2></div>
+  <p>Submit a request, then process the next one.</p>
+</section>
+
+<div class="layout">
+  <aside>
+    <section class="panel">
+      <div class="panel-head"><div><h3>New complaint</h3><small>Submit a help desk request</small></div><span class="count">INPUT</span></div>
+      <div class="panel-body">
+        <form id="complaintForm">
+          <div class="field"><label for="person">REPORTED BY</label><input id="person" maxlength="40" placeholder="e.g. Anu Thomas" required></div>
+          <div class="field"><label for="issue">ISSUE DESCRIPTION</label><input id="issue" maxlength="65" placeholder="e.g. Wi-Fi not working" required></div>
+          <div class="field"><label for="priority">PRIORITY</label><select id="priority"><option value="Normal">Normal</option><option value="High">High</option><option value="Critical">Critical</option></select></div>
+          <button class="btn primary full" type="submit">+ Submit complaint</button>
+        </form>
+        <p class="message" id="message" aria-live="polite">Ready. Submit your first complaint.</p>
+        <div style="height:1px;background:var(--line);margin:17px 0"></div>
+        <button class="btn full" id="processBtn" type="button">Process next complaint →</button>
+        <button class="btn full" id="demoBtn" type="button" style="margin-top:9px">▶ Run live demo</button>
+        <button class="btn full" id="resetBtn" type="button" style="margin-top:9px">↻ Reset all</button>
+        <p class="hint" style="margin-top:15px">The live demo automatically adds and resolves sample complaints so you can observe all three structures.</p>
+      </div>
+    </section>
+  </aside>
+
+  <div>
+    <section class="panel">
+      <div class="panel-head"><div><h3>01 / Normal queue</h3><small>First In, First Out — FIFO</small></div><span class="count" id="normalLabel">0 ITEMS</span></div>
+      <div class="structure">
+        <div class="structure-top"><span class="label">FRONT → REAR</span><span class="count">Oldest leaves first</span></div>
+        <div class="nodes" id="normalNodes"><div class="empty">No normal complaints yet.</div></div>
+        <div class="flow-note">ENQUEUE adds at the rear. DEQUEUE removes from the front. New normal complaints never skip older normal complaints.</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><div><h3>02 / Priority queue</h3><small>Critical → High → Normal</small></div><span class="count" id="priorityLabel">0 ITEMS</span></div>
+      <div class="structure">
+        <div class="structure-top"><span class="label">HIGHEST PRIORITY FIRST</span><span class="count">Urgent issues</span></div>
+        <div class="nodes" id="priorityNodes"><div class="empty">No urgent complaints yet.</div></div>
+        <div class="flow-note">Critical complaints are processed first, then High. Equal-priority complaints retain their arrival order. Normal-priority complaints use the normal FIFO queue above.</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><div><h3>03 / Resolved history</h3><small>Linked List — connected nodes</small></div><span class="count" id="historyLabel">0 NODES</span></div>
+      <div class="structure">
+        <div class="structure-top"><span class="label">HEAD → NEXT → NEXT</span><span class="count">Completion order</span></div>
+        <div class="nodes" id="historyNodes"><div class="empty">Resolved complaints will appear here.</div></div>
+        <div class="flow-note">Each resolved complaint is appended as a new node. The arrow represents the next pointer connecting each record in the history list.</div>
+      </div>
+    </section>
+
+    <section class="panel operation-log">
+      <div class="panel-head"><div><h3>Operation log</h3><small>Follow what the system does</small></div><span class="count" id="operationCount">0 OPS</span></div>
+      <div class="panel-body"><div class="log-list" id="logList"><div class="log-empty">Operations will appear here as you use the simulator.</div></div></div>
+    </section>
+  </div>
+</div>
+
+<footer>
+  <span>IT Help Desk Management System · Java DSA Project</span>
+  <span>Designed by <b>Sherry James</b> · Roll No. 56</span>
+</footer>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const priorityRank = {Critical:3, High:2, Normal:1};
+
+let normalQueue = [];
+let priorityQueue = [];
+let resolvedList = [];
+let nextId = 101;
+let operationTotal = 0;
+let demoRunning = false;
+let lastNormalId = null;
+let lastPriorityId = null;
+let lastResolvedId = null;
+
+function makeTicket(person, issue, priority) {
+  return {id:nextId++, person, issue, priority, createdOrder:nextId-102};
+}
+
+function escapeText(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  })[char]);
+}
+
+function addLog(operation, description) {
+  const list = $('logList');
+  const empty = list.querySelector('.log-empty');
+  if (empty) empty.remove();
+
+  const row = document.createElement('div');
+  row.className = 'log-entry';
+  const code = document.createElement('code');
+  code.textContent = operation + '()';
+  const detail = document.createElement('span');
+  detail.textContent = description;
+  row.append(code, detail);
+  list.prepend(row);
+
+  while (list.children.length > 10) list.lastElementChild.remove();
+  $('operationCount').textContent = operationTotal + ' OPS';
+}
+
+function ticketNode(ticket, type, index) {
+  const card = document.createElement('article');
+  card.className = 'node' + (type === 'history' ? ' resolved' : '') +
+    (type === 'normal' && index === 0 ? ' normal' : '');
+  const id = document.createElement('div');
+  id.className = 'id';
+  id.textContent = '#' + ticket.id;
+  const title = document.createElement('strong');
+  title.textContent = ticket.issue;
+  const person = document.createElement('small');
+  person.textContent = ticket.person;
+  const level = document.createElement('span');
+  level.className = 'level';
+  level.textContent = type === 'history' ? 'RESOLVED' : ticket.priority;
+  card.append(id, title, person, level);
+  if (type === 'history') {
+    const pointer = document.createElement('small');
+    pointer.style.color = 'var(--green)';
+    pointer.textContent = index === resolvedList.length - 1 ? 'next → null' : 'next →';
+    card.append(pointer);
+  }
+  return card;
+}
+
+function renderNodes(containerId, tickets, type, emptyText) {
+  const container = $(containerId);
+  container.replaceChildren();
+
+  if (!tickets.length) {
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.textContent = emptyText;
+    container.append(empty);
+    return;
+  }
+
+  tickets.forEach((ticket, index) => {
+    if (index > 0) {
+      const arrow = document.createElement('span');
+      arrow.className = 'arrow';
+      arrow.textContent = type === 'history' ? '→' : '›';
+      container.append(arrow);
+    }
+    const card = ticketNode(ticket, type, index);
+    if (ticket.id === lastNormalId && type === 'normal') card.classList.add('just-added');
+    if (ticket.id === lastPriorityId && type === 'priority') card.classList.add('just-added');
+    if (ticket.id === lastResolvedId && type === 'history') card.classList.add('just-added');
+    container.append(card);
+  });
+}
+
+function render() {
+  priorityQueue.sort((a,b) =>
+    priorityRank[b.priority] - priorityRank[a.priority] || a.createdOrder - b.createdOrder
+  );
+
+  renderNodes('normalNodes', normalQueue, 'normal', 'No normal complaints yet.');
+  renderNodes('priorityNodes', priorityQueue, 'priority', 'No urgent complaints yet.');
+  renderNodes('historyNodes', resolvedList, 'history', 'Resolved complaints will appear here.');
+
+  $('pendingCount').textContent = normalQueue.length + priorityQueue.length;
+  $('normalCount').textContent = normalQueue.length;
+  $('priorityCount').textContent = priorityQueue.length;
+  $('resolvedCount').textContent = resolvedList.length;
+  $('normalLabel').textContent = normalQueue.length + ' ITEMS';
+  $('priorityLabel').textContent = priorityQueue.length + ' ITEMS';
+  $('historyLabel').textContent = resolvedList.length + ' NODES';
+  $('operationCount').textContent = operationTotal + ' OPS';
+  $('processBtn').disabled = normalQueue.length + priorityQueue.length === 0 || demoRunning;
+  $('demoBtn').disabled = demoRunning;
+  $('resetBtn').disabled = demoRunning;
+  $('complaintForm').querySelector('button[type="submit"]').disabled = demoRunning;
+}
+
+function submitComplaint(person, issue, priority) {
+  if (normalQueue.length + priorityQueue.length >= 30) {
+    $('message').textContent = 'Demo limit reached. Process complaints before adding more.';
+    return false;
+  }
+  const ticket = makeTicket(person, issue, priority);
+
+  if (priority === 'Normal') {
+    normalQueue.push(ticket);
+    lastNormalId = ticket.id;
+    operationTotal++;
+    addLog('enqueue', '#' + ticket.id + ' added to the rear of the normal FIFO queue.');
+  } else {
+    priorityQueue.push(ticket);
+    lastPriorityId = ticket.id;
+    operationTotal++;
+    addLog('offer', '#' + ticket.id + ' added to the priority queue with ' + priority + ' priority.');
+  }
+
+  $('message').textContent = 'Complaint #' + ticket.id + ' submitted successfully.';
+  render();
+  return true;
+}
+
+function processNext() {
+  let ticket;
+
+  if (priorityQueue.length > 0) {
+    priorityQueue.sort((a,b) =>
+      priorityRank[b.priority] - priorityRank[a.priority] || a.createdOrder - b.createdOrder
+    );
+    ticket = priorityQueue.shift();
+    operationTotal++;
+    addLog('poll', '#' + ticket.id + ' selected from the priority queue (' + ticket.priority + ').');
+  } else if (normalQueue.length > 0) {
+    ticket = normalQueue.shift();
+    operationTotal++;
+    addLog('dequeue', '#' + ticket.id + ' removed from the front of the normal FIFO queue.');
+  } else {
+    $('message').textContent = 'Both queues are empty. Add a complaint first.';
+    return;
+  }
+
+  resolvedList.push(ticket);
+  lastResolvedId = ticket.id;
+  operationTotal++;
+  addLog('add', '#' + ticket.id + ' appended to the end of the resolved linked list.');
+  $('message').textContent = 'Processed #' + ticket.id + '. It is now in resolved history.';
+  render();
+}
+
+$('complaintForm').addEventListener('submit', event => {
+  event.preventDefault();
+  const person = $('person').value.trim();
+  const issue = $('issue').value.trim();
+  const priority = $('priority').value;
+  if (!person || !issue) return;
+
+  if (submitComplaint(person, issue, priority)) {
+    $('complaintForm').reset();
+  }
+});
+
+$('processBtn').addEventListener('click', processNext);
+
+$('resetBtn').addEventListener('click', () => {
+  normalQueue = [];
+  priorityQueue = [];
+  resolvedList = [];
+  nextId = 101;
+  operationTotal = 0;
+  lastNormalId = lastPriorityId = lastResolvedId = null;
+  $('logList').innerHTML = '<div class="log-empty">Operations will appear here as you use the simulator.</div>';
+  $('message').textContent = 'All three structures have been reset.';
+  render();
+});
+
+$('demoBtn').addEventListener('click', async () => {
+  demoRunning = true;
+  render();
+
+  const samples = [
+    ['Anu Thomas','Lab Wi-Fi disconnected','Normal'],
+    ['Rahul Das','Printer not responding','Normal'],
+    ['Maya Joseph','Server room network down','Critical'],
+    ['Dev Nair','Cannot log in','High'],
+    ['Isha Roy','Software installation','Normal'],
+    ['Ava Mathew','Main lab network outage','Critical']
+  ];
+
+  $('message').textContent = 'Demo running: watch complaints enter the queues.';
+  for (const sample of samples) {
+    submitComplaint(...sample);
+    await new Promise(resolve => setTimeout(resolve, 900));
+  }
+
+  $('message').textContent = 'Now processing complaints in the correct order.';
+  await new Promise(resolve => setTimeout(resolve, 700));
+
+  while (normalQueue.length || priorityQueue.length) {
+    processNext();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+
+  demoRunning = false;
+  lastNormalId = lastPriorityId = lastResolvedId = null;
+  render();
+  $('message').textContent = 'Demo complete. All complaints have been resolved.';
+});
+
+render();
+</script>
+</body>
+</html>
